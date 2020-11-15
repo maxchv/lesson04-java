@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 import java.util.function.DoubleSupplier;
+import java.util.function.IntPredicate;
 import java.util.stream.DoubleStream;
 import java.util.stream.IntStream;
 import java.util.stream.LongStream;
@@ -18,7 +19,29 @@ public class Demo {
         // Stream API
         // createStreams();
 
+        /*
+            1. Конвейерные (не терминальные) — возвращают другой Stream, то есть работают как builder,
+            2. Терминальные — возвращают другой объект, такой как коллекция, примитивы,
+               объекты, Optional и т.д.
+         */
+//        class OnlyOdd implements IntPredicate {
+//            @Override
+//            public boolean test(int value) {
+//                return value % 2 == 1;
+//            }
+//        }
+        IntPredicate predicate = value -> value % 2 == 0;
+        Test<Integer> supplier = data -> {System.out.println(data);};
+        IntStream.range(0, 100)
+                //.filter(new OnlyOdd())
+                .filter(value -> value % 2 == 1)
+                .forEach(System.out::println);
     }
+
+    interface Test<T> {
+        void apply(T data);
+    }
+
 
     private static void createStreams() throws IOException {
         // Создание стрима
