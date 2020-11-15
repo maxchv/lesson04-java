@@ -78,9 +78,35 @@ public class Demo {
     }
 }
 
+// since 1.2 add()
+// since 1.8 stream()
+interface ListList<T> {
+    int add(T data);
+    // методы по умолчанию обеспечивают обратную совместимость
+    // с ранее написанным кодом и дополняют новый функцинонал
+    default void stream() {
+
+    }
+}
+
+class ArrayListList<T> implements ListList<T> {
+
+    @Override
+    public int add(T data) {
+        return 0;
+    }
+}
+
 interface SimpleInterface {
     double PI = 3.14;
+
     void method();
+
+    // since java 8
+    default void defaultMethod() {
+
+    }
+    // since java 8
     static void staticMethod() {
         System.out.println("It is work since Java 8");
     }
