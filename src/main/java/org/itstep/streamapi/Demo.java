@@ -1,18 +1,15 @@
 package org.itstep.streamapi;
 
+
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.function.DoubleSupplier;
 import java.util.function.IntPredicate;
-import java.util.stream.DoubleStream;
-import java.util.stream.IntStream;
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
+import java.util.function.IntUnaryOperator;
+import java.util.stream.*;
 
 public class Demo {
     public static void main(String[] args) throws IOException {
@@ -33,9 +30,49 @@ public class Demo {
         IntPredicate predicate = value -> value % 2 == 0;
         Test<Integer> supplier = data -> {System.out.println(data);};
         IntStream.range(0, 100)
+                .skip(10)
+                .limit(10)
                 //.filter(new OnlyOdd())
                 .filter(value -> value % 2 == 1)
+                .map(value -> value + 1000)
                 .forEach(System.out::println);
+
+        // Optional<>
+        final Random random = new Random();
+        OptionalDouble avg =
+                IntStream.generate(() -> random.nextInt(100))
+                .limit(100)
+                .average();
+        if(avg.isPresent()) {
+            System.out.println(avg.getAsDouble());
+        }
+
+        System.out.println(randomString().orElse("").length());
+
+        // Ссылки на методы
+        Printable p = System.out::println;
+
+        // Ленивость
+        System.out.println("---------");
+
+        Stream<String> testStream = Stream.of("One", "Two", "Three");
+        Map<String, Integer>
+                map = testStream
+                .peek(System.out::println)
+                .collect(Collectors.toMap(data -> data, String::length));
+        List<String> list = testStream.collect(Collectors.toList());
+        for(Map.Entry<String, Integer> entry: map.entrySet()) {
+            System.out.println(entry.getKey() + ": " + entry.getValue());
+        }
+    }
+
+    interface Printable {
+        void print(String s);
+    }
+
+    public static Optional<String> randomString() {
+        Random rnd = new Random();
+        return rnd.nextBoolean() ? Optional.of("It is good") : Optional.empty();
     }
 
     interface Test<T> {
@@ -80,10 +117,11 @@ public class Demo {
 
 // since 1.2 add()
 // since 1.8 stream()
+// @FunctionalInterface
 interface ListList<T> {
     int add(T data);
     // методы по умолчанию обеспечивают обратную совместимость
-    // с ранее написанным кодом и дополняют новый функцинонал
+    // с ранее написанным кодом и дополняют новый функционал
     default void stream() {
 
     }
